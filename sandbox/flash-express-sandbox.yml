@@ -1,0 +1,63 @@
+generated: '2026-08-12'
+method: searched
+source: https://open-docs.flashexpress.com/#api-environment
+note: >-
+  Flash Express operates a genuine two-environment separation: a production Open API host
+  and a separate "training" (TRA) host with its own base URL. That is the whole of the
+  published sandbox surface. Flash Express does NOT publish magic test values — there are
+  no test tracking numbers, no test postal codes, no test merchant ids, no simulated
+  decline or exception triggers, and no time-simulation tooling documented anywhere in the
+  reference. Credentials for the training environment are issued by Flash Express support
+  in the same way as production credentials; there is no self-service sandbox signup and no
+  test-key prefix that distinguishes a test credential from a live one. No test values are
+  invented here.
+environments:
+- name: production
+  base_url: https://open-api.flashexpress.com
+  live: true
+- name: training
+  base_url: https://open-api-tra.flashexpress.com
+  live: false
+  aliases: [TRA, training ENV]
+  description: >-
+    Non-production environment for merchant integration testing. Documented in the API
+    Environment section alongside production.
+separation:
+  mechanism: distinct base host
+  key_prefix: null
+  mode_parameter: null
+  note: >-
+    Environment is selected purely by which host you call. There is no mode flag in the
+    request and no prefix on the merchant id or secret key, so a credential cannot be
+    inspected to tell whether it is a test or live credential. Calling the wrong host with
+    the wrong credential surfaces as code 1001 "customer not found" rather than as an
+    explicit environment mismatch.
+credentials:
+  self_service: false
+  issuance: >-
+    Contact Flash Express official support staff to obtain or reset the security key.
+    Applies to both environments.
+test_values:
+  published: false
+  test_cards: []
+  test_accounts: []
+  test_tracking_numbers: []
+  test_addresses: []
+  note: >-
+    None published. The documentation's inline examples use obviously-masked placeholders
+    (merchant id "AAXXXX", tracking number "TH0112XXXXXX", merchant order number
+    "123456789XXXX") which are illustrative masks, not working test fixtures.
+test_clock:
+  supported: false
+fixtures_and_triggers:
+  supported: false
+  note: No event-trigger or fixture tooling is documented for simulating parcel status transitions in the training environment.
+reference_clients:
+  note: >-
+    Four downloadable reference client implementations (C#, PHP, Java, Python) are
+    published and can be pointed at either environment. See packages/flash-express-packages.yml.
+summary:
+  sandbox_present: true
+  self_service_signup: false
+  magic_test_values: false
+  time_simulation: false

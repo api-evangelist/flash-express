@@ -1,23 +1,137 @@
 aid: flash-express
 name: Flash Express
-description: 'Flash Express is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: 'Flash Express is a Bangkok-headquartered express parcel delivery and e-commerce
+  logistics operator serving Thailand, with affiliated operations in the Philippines and Laos.
+  It runs door-to-door pickup and last-mile delivery for B2B, B2C and C2C shippers, including
+  next-day and weekend delivery, bulky and fruit shipping, cash-on-delivery collection with daily
+  settlement, parcel insurance, and a nationwide network of branches and drop-off points. For
+  merchants and platform integrators Flash Express publishes the FlashExpress Open API, an
+  HTTPS/POST, form-urlencoded, SHA256-signed interface covering warehouse and sub-account
+  management, order creation and modification, label printing, freight-rate estimation, parcel
+  tracking, courier pickup scheduling, and a webhook service that pushes status, weight, price,
+  courier and route events back to the merchant.'
+image: https://flashexpress.com/favicon.ico
 url: https://raw.githubusercontent.com/api-evangelist/flash-express/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-08-12'
 modified: '2026-08-12'
 tags:
 - Company
-apis: []
+- Logistics
+- Shipping
+- Delivery
+- Parcel Tracking
+- E-Commerce
+- Last Mile
+- Courier
+- Cash on Delivery
+- Thailand
+- Southeast Asia
+- Webhooks
+apis:
+- aid: flash-express-open-api
+  name: FlashExpress Open API
+  description: 'The FlashExpress Open API is the merchant-facing integration surface for Flash
+    Express parcel logistics in Thailand. All calls are HTTPS POST with an
+    application/x-www-form-urlencoded body and a JSON response envelope of code/message/data.
+    Every request is authenticated with a merchant id (mchId), a random nonce string (nonceStr)
+    and an uppercase SHA256 signature (sign) computed over the ASCII-sorted non-empty parameters
+    joined with a merchant secret key issued by Flash Express support. The API covers warehouse
+    listing, the Flash standard address/location tree, sub-account creation, order creation
+    (including creation against a merchant-supplied tracking number), order modification and
+    cancellation, single and batch parcel route tracking, delivered-proof retrieval, 100x180mm and
+    100x75mm label pre-print, freight-rate estimation, courier pickup notification scheduling and
+    cancellation, and webhook subscription management.'
+  humanURL: https://open-docs.flashexpress.com/
+  baseURL: https://open-api.flashexpress.com
+  tags:
+  - Shipping
+  - Logistics
+  - Parcel Tracking
+  - Orders
+  - Webhooks
+  - Cash on Delivery
+  properties:
+  - type: Documentation
+    url: https://open-docs.flashexpress.com/
+  - type: APIReference
+    url: https://open-docs.flashexpress.com/#api-reference
+  - type: Authentication
+    url: authentication/flash-express-authentication.yml
+  - type: Conventions
+    url: conventions/flash-express-conventions.yml
+  - type: ErrorCatalog
+    url: errors/flash-express-error-codes.yml
+  - type: Webhooks
+    url: asyncapi/flash-express-webhooks.yml
+  - type: DataModel
+    url: data-model/flash-express-data-model.yml
+  - type: Sandbox
+    url: sandbox/flash-express-sandbox.yml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: DomainSecurity
+  url: security/flash-express-domain-security.yml
 - type: Website
-  url: https://www.nasdaqprivatemarket.com/
+  url: https://flashexpress.com/en/
+- type: DeveloperPortal
+  url: https://open-docs.flashexpress.com/
+- type: Documentation
+  url: https://open-docs.flashexpress.com/
+- type: APIReference
+  url: https://open-docs.flashexpress.com/#api-reference
+- type: GettingStarted
+  url: https://open-docs.flashexpress.com/#the-basic-standard
+- type: Support
+  url: https://flashexpress.com/fle/contact-us
+- type: HelpCenter
+  url: https://flashexpress.com/fle/faq
+- type: Blog
+  url: https://flashexpress.com/fle/news/
+- type: Pricing
+  url: https://flashexpress.com/fle/check-price
+- type: SignUp
+  url: https://flashexpress.com/fle/register
+- type: Login
+  url: https://flashexpress.com/fle/login
+- type: TermsOfService
+  url: https://flashexpress.com/fle/our-service/service-agreement/company-agreement
+- type: PrivacyPolicy
+  url: https://flashexpress.com/fle/our-service/service-agreement/privacy-policy
+- type: Packages
+  url: packages/flash-express-packages.yml
+- type: SDKs
+  url: packages/flash-express-packages.yml
+- type: Authentication
+  url: authentication/flash-express-authentication.yml
+- type: Conventions
+  url: conventions/flash-express-conventions.yml
+- type: ErrorCatalog
+  url: errors/flash-express-error-codes.yml
+- type: Webhooks
+  url: asyncapi/flash-express-webhooks.yml
+- type: DataModel
+  url: data-model/flash-express-data-model.yml
+- type: Sandbox
+  url: sandbox/flash-express-sandbox.yml
+- type: Conformance
+  url: conformance/flash-express-conformance.yml
+- type: Lifecycle
+  url: lifecycle/flash-express-lifecycle.yml
+- type: Plans
+  url: plans/flash-express-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/flash-express-rate-limits.yml
+- type: LLMsTxt
+  url: llms/flash-express-llms.txt
+x-enrichment:
+  date: '2026-08-12'
+  status: enriched
+  artifacts_added: 14
+  pass: local-v1

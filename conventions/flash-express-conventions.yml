@@ -1,0 +1,154 @@
+generated: '2026-08-12'
+method: searched
+source: https://open-docs.flashexpress.com/#api-reference
+note: >-
+  Cross-cutting request/response semantics for the FlashExpress Open API, read from the
+  published documentation. Flash Express publishes no OpenAPI, so nothing here is derived
+  from a spec. Several conventions in this API are unusual enough to be worth calling out
+  for an integrating agent: every operation is POST regardless of whether it reads or
+  writes, request bodies are form-urlencoded rather than JSON, transport-level success is
+  decoupled from business success (HTTP 200 with an error code in the envelope), weight is
+  always in grams and money always in integer cents, and there is no idempotency key.
+transport:
+  protocol: https
+  http_methods: [POST]
+  note: >-
+    Every documented operation is an HTTP POST, including pure reads such as warehouse
+    listing, parcel tracking and freight-rate estimation. There are no GET, PUT, PATCH or
+    DELETE operations, so HTTP method carries no semantic meaning and cannot be used to
+    infer safety or idempotency.
+  request_content_type: application/x-www-form-urlencoded
+  response_content_type: application/json
+  character_encoding: UTF-8
+authentication:
+  style: shared-secret request signing
+  algorithm: SHA256
+  parameters: [mchId, nonceStr, sign]
+  detail: authentication/flash-express-authentication.yml
+error_envelope:
+  style: envelope
+  rfc9457: false
+  shape:
+    code: integer
+    message: string
+    data: object
+  success_code: 1
+  server_error_code: 0
+  business_error_range: 1000+
+  note: >-
+    Business outcome is signalled in the body, not the HTTP status line. A caller MUST
+    inspect the `code` field on every response; a 2xx HTTP status alone does not mean the
+    call succeeded. `code: 1` is success, `code: 0` is an internal server error, and codes
+    from 1000 upward are specific business errors.
+  catalog: errors/flash-express-error-codes.yml
+idempotency:
+  supported: false
+  idempotency_key_header: null
+  note: >-
+    Flash Express documents no idempotency key. There is no Idempotency-Key header, no
+    request-replay window and no documented safe-retry contract for order creation. The
+    closest mechanism is de-duplication by merchant reference: order creation accepts a
+    merchant-supplied `outTradeNo` (and, for POST /open/v3/ordersByMchPno, a
+    merchant-supplied `mchPno` tracking number), and re-submitting an existing one fails
+    with code 1003 "Order is exists". That is a duplicate-rejection guard, NOT idempotency
+    — a retried create returns an error rather than replaying the original response, so a
+    caller that retries after a timeout cannot recover the original order payload from the
+    API and must reconcile out of band. Because idempotency is genuinely absent, no
+    `Idempotency` pointer is emitted in apis.yml.
+  deduplication:
+    field: outTradeNo
+    scope: per merchant
+    on_conflict: {code: 1003, message: Order is exists}
+pagination:
+  supported: false
+  note: >-
+    No pagination convention is documented. No page, pageNo, pageSize, cursor, limit or
+    offset parameter appears anywhere in the published reference. Collection-returning
+    operations (warehouse listing, the address/location tree) return the full set in one
+    response. Batch tracking is bounded by an explicit list of tracking numbers supplied
+    by the caller rather than by paging.
+batching:
+  supported: true
+  operations:
+  - POST /open/v1/orders/routesBatch
+  note: Batch parcel tracking accepts multiple tracking numbers in a single call.
+field_expansion:
+  supported: false
+sparse_fieldsets:
+  supported: false
+metadata:
+  supported: true
+  fields: [remark, outTradeNo]
+  note: >-
+    `outTradeNo` carries the merchant's own order reference through the whole parcel
+    lifecycle and is echoed back on webhook callbacks, making it the join key between
+    Flash Express records and merchant systems. `remark` is a free-text note field.
+request_tracing:
+  request_id_header: null
+  supported: false
+  note: >-
+    No request-id or correlation-id header is documented on requests or responses. The
+    only correlatable identifiers are business identifiers: `pno` (Flash tracking number),
+    `orderId` and the merchant's `outTradeNo`.
+internationalization:
+  supported: true
+  header: Accept-Language
+  languages: [zh-CN, en, th, lo]
+  note: >-
+    The Accept-Language request header switches the language of returned messages,
+    including error messages and route descriptions. Documentation itself is published in
+    Chinese, English, Thai and Lao.
+units:
+  weight:
+    unit: gram
+    note: >-
+      Weight is always grams. The caller must convert before calling — the documentation
+      gives 2KG as 2000. There is no unit field; passing kilograms silently means a
+      1000x understatement.
+  currency:
+    unit: cent
+    ratio: 1 THB = 100 cent
+    note: >-
+      Money fields (COD amount, insured declared value, freight rates) are integer minor
+      units the docs call "cent", where 1 THB = 100 cent. The caller must convert THB to
+      cent before calling. There is no currency code field; the API is Thailand-domestic.
+  applies_to: [weight, codAmount, insureDeclareValue]
+versioning:
+  scheme: uri-path
+  versions_in_use: [v1, v3]
+  current: mixed
+  note: >-
+    Version is embedded in the path segment after /open/. Most operations are v1; order
+    creation is v3 (/open/v3/orders and /open/v3/ordersByMchPno). Versions coexist rather
+    than superseding one another, and no version-negotiation header is documented.
+  detail: lifecycle/flash-express-lifecycle.yml
+rate_limiting:
+  documented: false
+  headers: []
+  note: >-
+    No rate limit, quota, throttle or Retry-After signal is documented anywhere in the
+    published reference, and no response header is described. See
+    rate-limits/flash-express-rate-limits.yml.
+  detail: rate-limits/flash-express-rate-limits.yml
+webhooks:
+  supported: true
+  delivery: HTTP POST to a merchant-registered URL
+  retry: >-
+    Flash Express retries automatically until the merchant endpoint returns a success
+    body. The merchant must respond with an HTTP status in [200,300) AND a JSON body of
+    {"errorCode":"1","state":"success"}; anything else, including a 2xx with the wrong
+    body, causes a resend.
+  detail: asyncapi/flash-express-webhooks.yml
+encoding_pitfalls:
+- Values must be urlencoded, but the signature is computed on the pre-urlencoded values.
+- Parameters whose value is entirely whitespace may be transmitted but must be excluded from the signature.
+- Parameter names are case sensitive for both signing and transmission.
+- The signature sort is by ASCII code of the parameter NAME, ascending.
+cross_references:
+  authentication: authentication/flash-express-authentication.yml
+  errors: errors/flash-express-error-codes.yml
+  lifecycle: lifecycle/flash-express-lifecycle.yml
+  rate_limits: rate-limits/flash-express-rate-limits.yml
+  webhooks: asyncapi/flash-express-webhooks.yml
+  data_model: data-model/flash-express-data-model.yml
+  sandbox: sandbox/flash-express-sandbox.yml

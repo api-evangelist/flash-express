@@ -1,0 +1,139 @@
+generated: '2026-08-12'
+method: searched
+source: https://open-docs.flashexpress.com/#web-hook-api
+spec_type: null
+note: >-
+  Flash Express publishes NO AsyncAPI document. Every host was probed and no
+  /asyncapi.yaml, /asyncapi.json or event-catalog surface exists, and there is no
+  Flash Express GitHub organization to search. What the provider does publish is a
+  real, documented webhook catalog with five event types, a self-service subscription
+  API, a defined acknowledgement contract and automatic redelivery. That webhook
+  surface is captured here and pointed at with `type: Webhooks`; no `type: AsyncAPI`
+  pointer is emitted because no AsyncAPI document exists. Nothing in this file is
+  fabricated into AsyncAPI shape.
+event_surface:
+  style: webhooks
+  transport: HTTP POST to a merchant-registered callback URL
+  payload_content_type: application/x-www-form-urlencoded
+  subscription: self-service via API
+  asyncapi_published: false
+  streaming: false
+subscription_api:
+  configure:
+    operation: POST /open/v1/setting/web_hook_service
+    description: Register, replace or close the callback URL for one webhook type.
+    parameters:
+    - {name: mchId, type: string(32), required: true, description: merchant No}
+    - {name: nonceStr, type: string(32), required: true, description: random nonce string}
+    - {name: sign, type: string(64), required: true, description: signature}
+    - {name: serviceCategory, type: integer, required: true, description: '0 = close the URL, 1 = configure the URL'}
+    - {name: url, type: string(200), required: false, description: callback URL address}
+    - {name: webhookApiCode, type: integer, required: true, description: which webhook type this configuration applies to}
+    response_fields: [mchId, webhookApiCode, url, state, updateAt]
+  list:
+    operation: POST /gw/fda/open/standard/webhook/setting/infos
+    description: Retrieve the merchant's current webhook settings.
+events:
+- name: Web hook status
+  webhookApiCode: 0
+  description: Parcel status changes.
+  docs: https://open-docs.flashexpress.com/#web-hook-status
+- name: Web hook weight
+  webhookApiCode: 1
+  description: Parcel weight modifications recorded by Flash Express after measurement.
+  docs: https://open-docs.flashexpress.com/#web-hook-weight
+- name: Web hook price
+  webhookApiCode: 2
+  description: Parcel price/freight updates.
+  docs: https://open-docs.flashexpress.com/#web-hook-price
+- name: Web hook courier
+  webhookApiCode: 3
+  description: Courier assignment for a parcel.
+  docs: https://open-docs.flashexpress.com/#web-hook-courier
+- name: Web hook routes
+  webhookApiCode: 4
+  description: Route/tracking scan events as the parcel moves through the network.
+  docs: https://open-docs.flashexpress.com/#web-hook-routes
+delivery_contract:
+  method: POST
+  signature:
+    signed: true
+    algorithm: SHA256
+    signed_parameters: [mchId, nonceStr]
+    note: >-
+      Inbound webhook requests are signed, but only mchId and nonceStr participate in the
+      webhook signature — a narrower parameter set than the outbound API signature. A
+      merchant verifying a callback must sign those two fields only.
+  common_payload_fields:
+  - {name: mchId, description: Merchant account from FlashExpress}
+  - {name: nonceStr, description: timestamp string}
+  - {name: sign, description: SHA256 signature over (mchId, nonceStr)}
+  - {name: data.orderId, description: FlashExpress order id}
+  - {name: data.outTradeNo, description: merchant order number}
+  - {name: data.pno, description: waybill / tracking number}
+  - {name: data.recentPno, description: current tracking number}
+  - {name: data.state, description: status code}
+acknowledgement:
+  required_http_status: '[200,300)'
+  required_body:
+    errorCode: '1'
+    state: success
+  failure_body:
+    errorCode: '0'
+  note: >-
+    Both conditions must hold. An HTTP 2xx alone is not an acknowledgement — the body must
+    also be {"errorCode":"1","state":"success"}, otherwise Flash Express treats the
+    delivery as failed and resends.
+retry:
+  automatic: true
+  policy: >-
+    "If the transmission fail, the flash system will automatically resend until it receives
+    success status." No maximum attempt count, backoff schedule or expiry window is
+    published.
+  max_attempts: null
+  backoff: null
+  manual_replay: false
+  manual_replay_note: >-
+    The published Q&A states the web hook is unable to re-push again on demand and that the
+    merchant should check the related information through Flash Printer. There is no
+    self-service event replay endpoint.
+route_actions:
+  note: >-
+    The routes webhook and the tracking operations emit a documented routedAction
+    vocabulary. Full list published at https://open-docs.flashexpress.com/#route-action
+  values:
+  - RECEIVED
+  - RECEIVE_WAREHOUSE_SCAN
+  - SHIPMENT_WAREHOUSE_SCAN
+  - ARRIVAL_WAREHOUSE_SCAN
+  - DELIVERY_TICKET_CREATION_SCAN
+  - DETAIN_WAREHOUSE
+  - DELIVERY_CONFIRM
+  - DIFFICULTY_HANDOVER
+  - CONTINUE_TRANSPORT
+  - DIFFICULTY_RE_TRANSIT
+  - CANCEL_PARCEL
+  - HURRY_PARCEL
+  - CHANGE_PARCEL_INFO
+  - CHANGE_PARCEL_CLOSE
+  - CHANGE_PARCEL_SIGNED
+  - CHANGE_PARCEL_CANCEL
+  - CHANGE_PARCEL_IN_TRANSIT
+  - REVISION_TIME
+  - CUSTOMER_CHANGE_PARCEL_INFO
+  - DIFFICULTY_FINISH_INDEMNITY
+  - SYSTEM_AUTO_RETURN
+status_flow:
+  published: true
+  format: pdf
+  url: https://open-docs.flashexpress.com/download/status.pdf
+  note: >-
+    The parcel status state machine is published only as a PDF diagram, not as a
+    machine-readable enumeration.
+summary:
+  event_count: 5
+  asyncapi_present: false
+  webhooks_present: true
+  message_schemas_published: false
+  signed_deliveries: true
+  automatic_retry: true

@@ -1,0 +1,56 @@
+generated: '2026-08-12'
+method: searched
+source: https://open-docs.flashexpress.com/#api-reference
+note: >-
+  Flash Express documents NO rate limits for the FlashExpress Open API. limit_count is 0 as
+  a measured result. The full published reference was searched for "rate limit", "limit",
+  "frequency", "per second", "QPS", "throttl", "quota" and "too many" and none of these
+  appear in any operational sense. No response header is described anywhere in the
+  documentation — not RateLimit-*, not X-RateLimit-*, not Retry-After — and the published
+  response-code registry contains no throttling or too-many-requests code (the 22 documented
+  codes cover signature, validation, entitlement, state and coverage failures only). This
+  matters for an integrating agent: there is no runtime signal to back off on, so a client
+  cannot distinguish being throttled from a generic code 0 internal server error, and must
+  implement its own conservative pacing and backoff rather than reacting to a published
+  budget. Limits may well be enforced server-side; they are simply not published, and
+  nothing was inferred here.
+limit_count: 0
+documented: false
+enforcement_observed: false
+headers:
+  request: []
+  response: []
+  retry_after: false
+  note: No rate-limit response headers are documented.
+exhaustion:
+  status_code: null
+  envelope_code: null
+  note: >-
+    No documented behaviour on exhaustion. The response-code registry has no throttling
+    code, so an exceeded limit would most likely surface as code 0 "internal server error"
+    or as a transport-level failure, neither of which is distinguishable from an unrelated
+    fault.
+limits: []
+scopes_checked:
+- per-key
+- per-account
+- per-endpoint
+- per-ip
+guidance_published: false
+related_constraints:
+- constraint: >-
+    Webhook redelivery is unbounded — Flash Express "will automatically resend until it
+    receives success status" with no published maximum attempt count or backoff schedule.
+    This is inbound pressure on the merchant endpoint rather than an outbound rate limit,
+    but it is the only volume-related behaviour the provider commits to in writing.
+  source: https://open-docs.flashexpress.com/#web-hook-status
+- constraint: >-
+    The pickup-notification flow is guarded by state rather than by rate: code 1010
+    rejects a new courier notification while an incomplete one exists. This bounds
+    scheduling calls per merchant but is a business rule, not a throttle.
+  source: https://open-docs.flashexpress.com/#response-code
+- constraint: >-
+    The docs advise against frequent delivery-time changes — the REVISION_TIME route
+    message reads "(please do not operate frequently)". Advisory only, with no stated
+    numeric limit.
+  source: https://open-docs.flashexpress.com/#route-action

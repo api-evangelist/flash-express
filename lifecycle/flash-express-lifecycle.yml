@@ -1,0 +1,84 @@
+generated: '2026-08-12'
+method: searched
+source: https://open-docs.flashexpress.com/
+note: >-
+  Operational-transparency posture read from the published FlashExpress Open API reference
+  and from live probes of the candidate status hosts. Flash Express versions its API in the
+  URI path but publishes no changelog, no deprecation policy, no sunset signalling, no SLA
+  and no status page. Those are recorded as verified absences below, each with what was
+  actually checked. No `StatusPage`, `Deprecation` or `ChangeLog` pointer is emitted in
+  apis.yml, because none of those surfaces exists.
+versioning:
+  scheme: uri-path
+  pattern: /open/{version}/...
+  versions_in_use: [v1, v3]
+  current: mixed
+  note: >-
+    Order creation is v3 (/open/v3/orders, /open/v3/ordersByMchPno); every other documented
+    operation is v1. Two operations sit outside the /open/ prefix entirely on a gateway
+    path (/gw/fda/open/standard/address_core/url/query and
+    /gw/fda/open/standard/webhook/setting/infos), which suggests a partial platform
+    migration in progress. No v2 is documented.
+  negotiation_header: null
+  policy_url: null
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  rfc8594: false
+  note: >-
+    No deprecation or sunset policy is published. The documentation was searched for
+    "deprecat", "sunset", "version history", "changelog" and "update log" and none appear.
+    Older versions (v1) simply coexist with v3 with no stated retirement path, so an
+    integrator has no published notice period.
+  deprecated_operations: []
+change_log:
+  published: false
+  url: null
+  note: >-
+    No changelog, release-notes or version-history page exists on the developer docs host.
+    The Slate single-page reference carries no dated entries and no revision marker.
+sla:
+  published: false
+  url: null
+  uptime_target: null
+  note: >-
+    No API service-level agreement is published. Flash Express publishes commercial service
+    agreements for its delivery products at
+    https://flashexpress.com/fle/our-service/service-agreement/company-agreement, but these
+    cover the logistics service, not API availability.
+status_page:
+  published: false
+  url: null
+  evidence:
+  - url: https://status.flashexpress.com/
+    status: DNS resolution failed
+  - url: https://flashexpress.statuspage.io/
+    status: 200
+    result: miss
+    reason: >-
+      Redirects to the Atlassian Statuspage marketing site (page title "Real-Time Incident
+      Communication with Statuspage | Atlassian"). This is Atlassian's catch-all for an
+      unclaimed subdomain, not a Flash Express status page.
+support:
+  channels:
+  - {type: contact form, url: https://flashexpress.com/fle/contact-us}
+  - {type: faq, url: https://flashexpress.com/fle/faq}
+  - {type: docs q-and-a, url: 'https://open-docs.flashexpress.com/#q-a'}
+  api_key_issuance: >-
+    Security keys are obtained and reset only by contacting Flash Express official support
+    staff. There is no self-service developer console.
+maturity:
+  self_service_onboarding: false
+  public_credentials: false
+  note: >-
+    The API is merchant-gated: documentation is fully public and unauthenticated, but a
+    working credential requires a Flash Express merchant relationship and a support
+    request. Documentation availability and credential availability are decoupled here.
+summary:
+  versioning_published: true
+  deprecation_policy: false
+  changelog: false
+  sla: false
+  status_page: false

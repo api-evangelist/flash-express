@@ -1,0 +1,136 @@
+generated: '2026-08-12'
+method: searched
+source: https://open-docs.flashexpress.com/#response-code
+note: >-
+  Flash Express publishes a complete response-code registry in the Constants section of the
+  FlashExpress Open API reference. Every code below is transcribed verbatim from that table;
+  the `remediation` field is API Evangelist's reading of the published meaning and the
+  documented Q&A, and is marked as such. This is an envelope-code catalog, not RFC 9457
+  problem details — codes travel in the `code` field of the JSON body and the HTTP status
+  line is not the error channel.
+format: envelope
+rfc9457: false
+envelope:
+  code: integer
+  message: string
+  data: object
+  success_value: 1
+  http_status_carries_error: false
+  note: >-
+    A business error is returned with a normal HTTP 200 and a non-1 `code`. Callers must
+    branch on `code`, never on HTTP status alone.
+classes:
+- range: '1'
+  meaning: success
+- range: '0'
+  meaning: internal server error
+- range: 1000+
+  meaning: specific business errors
+problems:
+- code: 1
+  title: success
+  class: success
+- code: 0
+  title: internal server error
+  class: server
+  remediation: Retry with backoff. Note there is no idempotency key, so retrying a create may collide with code 1003.
+  remediation_source: api-evangelist-derived
+- code: 1000
+  title: Failed to submit
+  class: request
+  remediation: >-
+    Published Q&A: "There are errors in the request body, please check again the symbols in
+    the request body, together with the request url." Most often a malformed or
+    incorrectly urlencoded body, or the wrong request URL.
+  remediation_source: https://open-docs.flashexpress.com/#basic-information
+- code: 1001
+  title: customer not found
+  class: identity
+  remediation: Verify mchId is the merchant number issued by Flash Express and matches the environment being called.
+  remediation_source: api-evangelist-derived
+- code: 1002
+  title: invalid signature
+  class: authentication
+  remediation: >-
+    Published Q&A: recompute the signature by sorting non-empty parameters by ASCII code of
+    the parameter name ascending, joining as key=value pairs, appending &key=<secret>, taking
+    SHA256 and uppercasing. Exclude the sign parameter and any whitespace-only value; sign
+    before urlencoding; parameter names are case sensitive.
+  remediation_source: https://open-docs.flashexpress.com/#basic-information
+- code: 1003
+  title: Order is exists
+  class: conflict
+  remediation: >-
+    The outTradeNo (or merchant tracking number) has already been used for this merchant.
+    This is duplicate rejection, not idempotent replay — the original order payload is not
+    returned. Look the order up by the existing reference rather than re-creating it.
+  remediation_source: api-evangelist-derived
+- code: 1004
+  title: Sender address does not match
+  class: validation
+  remediation: Sender province/city/district names must match the Flash standard location tree returned by the address_core operation.
+  remediation_source: api-evangelist-derived
+- code: 1005
+  title: Destination address does not match
+  class: validation
+  remediation: Destination province/city/district names must match the Flash standard location tree returned by the address_core operation.
+  remediation_source: api-evangelist-derived
+- code: 1006
+  title: order not found
+  class: not-found
+- code: 1007
+  title: warehouse not found
+  class: not-found
+  remediation: Call POST /open/v1/warehouses to list valid warehouseNo values for this merchant.
+  remediation_source: api-evangelist-derived
+- code: 1008
+  title: COD Service is not registered
+  class: entitlement
+  remediation: Cash-on-delivery must be enabled on the merchant account by Flash Express before codEnabled can be used.
+  remediation_source: api-evangelist-derived
+- code: 1009
+  title: COD amount cannot be negative value
+  class: validation
+  remediation: codAmount is an integer in cents (1 THB = 100 cent) and must be zero or positive.
+  remediation_source: api-evangelist-derived
+- code: 1010
+  title: Imcomplete schedule of pickup is exists, no schedule of pickup is required
+  class: conflict
+  remediation: An open courier pickup notification already exists. Query notifications before scheduling another.
+  remediation_source: api-evangelist-derived
+  note: Title transcribed verbatim from the published table, including the "Imcomplete" spelling.
+- code: 1011
+  title: This courier notification can't be cancelled
+  class: state
+- code: 1015
+  title: Parcel is picked up, not allowed to cancel
+  class: state
+  remediation: Cancellation is only valid before pickup. After pickup the parcel must be handled through the returns/withdrawal flow.
+  remediation_source: api-evangelist-derived
+- code: 1018
+  title: Either sender's address and warehouse no should be sent
+  class: validation
+  remediation: Supply either an explicit sender address block or a warehouseNo, not neither.
+  remediation_source: api-evangelist-derived
+- code: 1019
+  title: pno and mchId not match
+  class: authorization
+  remediation: The tracking number belongs to a different merchant account. Parcels are scoped to the owning mchId.
+  remediation_source: api-evangelist-derived
+- code: 1020
+  title: insureDeclareValue cannot be negative value
+  class: validation
+  remediation: insureDeclareValue is an integer in cents and must be zero or positive.
+  remediation_source: api-evangelist-derived
+- code: 1021
+  title: Postal Code should be 5 digit number
+  class: validation
+- code: 1022
+  title: Sender's address are not in service range yet
+  class: coverage
+  remediation: The pickup address falls outside the current Flash Express service area.
+  remediation_source: api-evangelist-derived
+summary:
+  problem_count: 22
+  business_error_count: 20
+  classes: [success, server, request, identity, authentication, conflict, validation, not-found, entitlement, state, authorization, coverage]

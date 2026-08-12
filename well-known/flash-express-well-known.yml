@@ -1,0 +1,86 @@
+generated: '2026-08-12'
+method: probed
+source: live GET probes of /.well-known/* on every Flash Express host in apis.yml
+note: >-
+  No well-known document was found on any Flash Express host. Two distinct false-positive
+  patterns were observed and are recorded as MISSES, not hits. (1) open-docs.flashexpress.com
+  is a Slate static single-page docs app whose server returns the same 319,231-byte HTML
+  index for every unmatched path, so all five /.well-known/* probes returned HTTP 200 with an
+  identical HTML body — an SPA catch-all, not a document. (2) flashexpress.com returns HTTP
+  200 with a zero-byte body for every /.well-known/* path — an empty soft-200, also not a
+  document. Because no path returned a real document, NO WellKnown and NO SecurityTxt pointer
+  is emitted in apis.yml. open-api.flashexpress.com, the production API host, returns a clean
+  HTTP 404 for all five paths.
+hosts:
+- host: https://open-api.flashexpress.com
+  role: production API host
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+- host: https://open-api-tra.flashexpress.com
+  role: training/sandbox API host
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+- host: https://open-docs.flashexpress.com
+  role: developer documentation host
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    result: miss
+    reason: SPA catch-all returned the docs index HTML (text/html, 319231 bytes), not a document
+  - path: /.well-known/openid-configuration
+    status: 200
+    result: miss
+    reason: SPA catch-all returned the docs index HTML, not a document
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    result: miss
+    reason: SPA catch-all returned the docs index HTML, not a document
+  - path: /.well-known/api-catalog
+    status: 200
+    result: miss
+    reason: SPA catch-all returned the docs index HTML, not a document
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    result: miss
+    reason: SPA catch-all returned the docs index HTML, not a document
+- host: https://flashexpress.com
+  role: corporate website
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    result: miss
+    reason: empty soft-200, zero-byte body, content-type text/html
+  - path: /.well-known/agent-card.json
+    status: 200
+    result: miss
+    reason: empty soft-200, zero-byte body
+  - path: /.well-known/agent.json
+    status: 200
+    result: miss
+    reason: empty soft-200, zero-byte body
+summary:
+  documents_found: 0
+  security_txt: false
+  openid_configuration: false
+  oauth_authorization_server: false
+  api_catalog: false
+  ai_plugin: false
+  agent_card: false

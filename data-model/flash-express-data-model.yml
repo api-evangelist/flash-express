@@ -1,0 +1,221 @@
+generated: '2026-08-12'
+method: derived
+source: https://open-docs.flashexpress.com/#api-reference
+note: >-
+  Flash Express publishes no OpenAPI, so this entity graph is derived from the request and
+  response field tables and the JSON examples in the published FlashExpress Open API
+  reference rather than from schema $refs. Entities and identifier fields below all appear
+  verbatim in the documentation; the relationship edges are API Evangelist's reading of how
+  those identifier fields join the entities together. Cardinalities are inferred from the
+  operations that accept or return each field and are marked with confidence.
+entities:
+- name: Merchant
+  identifier: mchId
+  id_format: string(32)
+  description: >-
+    The merchant account Flash Express issues. Root tenant for every other entity; carried
+    on every request and every webhook callback.
+  operations: [POST /open/v1/new_sub_account]
+- name: SubAccount
+  identifier: mchId
+  description: A child merchant account created under a parent merchant.
+  operations: [POST /open/v1/new_sub_account]
+- name: Warehouse
+  identifier: warehouseNo
+  id_format: '<mchId>_NNN (observed pattern, e.g. AAXXXX_001)'
+  description: >-
+    A registered pickup origin for a merchant. Carries country/province/city/district,
+    postal code, detail address, phone and contact name.
+  fields: [warehouseNo, name, countryName, provinceName, cityName, districtName, postalCode, detailAddress, phone, srcName]
+  operations: [POST /open/v1/warehouses]
+- name: Order
+  identifier: orderId
+  alternate_identifiers: [outTradeNo, mchPno]
+  description: >-
+    A shipment booking. Created with a sender block or a warehouseNo, a destination block,
+    a return block, article and express category, weight in grams, and optional insurance
+    and cash-on-delivery amounts in cents.
+  operations:
+  - POST /open/v3/orders
+  - POST /open/v3/ordersByMchPno
+  - POST /open/v1/orders/modify
+  - POST /open/v1/orders/{pno}/cancel
+- name: Parcel
+  identifier: pno
+  alternate_identifiers: [recentPno]
+  id_format: 'TH-prefixed waybill number (observed, e.g. TH0112XXXXXX)'
+  description: >-
+    The physical waybill produced from an order. `pno` is the tracking number used by every
+    tracking, label, delivery-proof and cancellation operation. `recentPno` is the current
+    tracking number where a parcel has been re-labelled.
+  operations:
+  - POST /open/v1/orders/{pno}/routes
+  - POST /open/v1/orders/routesBatch
+  - POST /open/v1/orders/{pno}/deliveredInfo
+  - POST /open/v1/orders/{pno}/pre_print
+  - POST /open/v1/orders/{pno}/small/pre_print
+- name: Route
+  identifier: null
+  description: >-
+    A tracking scan event on a parcel, carrying a routedAction from the published
+    vocabulary and a localized human-readable message.
+  operations:
+  - 'POST /open/v1/orders/{pno}/routes'
+  - 'POST /open/v1/orders/routesBatch'
+- name: DeliveredInfo
+  identifier: null
+  description: Proof-of-delivery detail for a delivered parcel, including signature category.
+  operations:
+  - 'POST /open/v1/orders/{pno}/deliveredInfo'
+- name: Label
+  identifier: null
+  description: >-
+    A printable waybill label rendered for a parcel in one of two sizes, 100x180mm or
+    100x75mm.
+  operations:
+  - 'POST /open/v1/orders/{pno}/pre_print'
+  - 'POST /open/v1/orders/{pno}/small/pre_print'
+- name: Notification
+  identifier: id
+  description: >-
+    A courier pickup request scheduled by the merchant. Has its own state vocabulary
+    (0 Open, 1 Assigned, 2 Completed, 4 Canceled).
+  operations:
+  - POST /open/v1/notifications
+  - POST /open/v1/notify
+  - POST /open/v1/notify/{id}/cancel
+- name: WebhookSetting
+  identifier: webhookApiCode
+  description: >-
+    A per-type callback registration binding one of five webhook event types to a merchant
+    URL, with an open/closed state.
+  operations:
+  - POST /open/v1/setting/web_hook_service
+  - POST /gw/fda/open/standard/webhook/setting/infos
+- name: Location
+  identifier: null
+  description: >-
+    The Flash standard location tree — country, province, city, district and postal code.
+    Order addresses must match names from this tree or creation fails with code 1004/1005.
+  operations: [POST /gw/fda/open/standard/address_core/url/query]
+- name: FreightRate
+  identifier: null
+  description: Estimated freight cost for a prospective shipment, quoted in cents.
+  operations: [POST /open/v1/orders/estimate_rate]
+relationships:
+- from: Merchant
+  to: SubAccount
+  type: has_many
+  via: mchId
+  confidence: high
+- from: Merchant
+  to: Warehouse
+  type: has_many
+  via: mchId
+  confidence: high
+  note: POST /open/v1/warehouses returns all warehouses for the calling mchId.
+- from: Merchant
+  to: Order
+  type: has_many
+  via: mchId
+  confidence: high
+  note: Enforced — code 1019 "pno and mchId not match" rejects cross-merchant access.
+- from: Order
+  to: Warehouse
+  type: belongs_to
+  via: warehouseNo
+  confidence: high
+  note: Optional. Code 1018 requires either a warehouseNo or an explicit sender address block.
+- from: Order
+  to: Parcel
+  type: has_one
+  via: pno
+  confidence: high
+- from: Parcel
+  to: Route
+  type: has_many
+  via: pno
+  confidence: high
+- from: Parcel
+  to: DeliveredInfo
+  type: has_one
+  via: pno
+  confidence: high
+- from: Parcel
+  to: Label
+  type: has_many
+  via: pno
+  confidence: medium
+  note: Two label sizes are renderable for the same parcel.
+- from: Merchant
+  to: Notification
+  type: has_many
+  via: mchId
+  confidence: high
+- from: Merchant
+  to: WebhookSetting
+  type: has_many
+  via: mchId
+  confidence: high
+  note: One setting per webhookApiCode, five types available.
+- from: Order
+  to: Location
+  type: belongs_to
+  via: provinceName/cityName/districtName/postalCode
+  confidence: medium
+  note: Join is by name match against the standard tree, not by an id.
+enumerations:
+- name: ResponseCode
+  values_count: 22
+  source: errors/flash-express-error-codes.yml
+- name: ExpressCategory
+  values:
+  - {code: 1, meaning: Standard delivery}
+  - {code: 2, meaning: On-Time Delivery}
+  - {code: 4, meaning: bulky delivery}
+  - {code: 5, meaning: Fruit delivery}
+  - {code: 6, meaning: Happy Return}
+  - {code: 7, meaning: Happy Return Bulky}
+  note: Code 3 is not published.
+- name: ArticleCategory
+  values:
+  - {code: 0, meaning: File}
+  - {code: 1, meaning: Dry food}
+  - {code: 2, meaning: Commodity}
+  - {code: 3, meaning: Digital Products}
+  - {code: 4, meaning: Clothes}
+  - {code: 5, meaning: Books}
+  - {code: 6, meaning: Auto parts}
+  - {code: 7, meaning: Shoes and bags}
+  - {code: 8, meaning: Sports equipment}
+  - {code: 9, meaning: Cosmetics}
+  - {code: 10, meaning: Household}
+  - {code: 11, meaning: Fruit}
+  - {code: 99, meaning: Others}
+- name: NotificationState
+  values:
+  - {code: 0, meaning: Open}
+  - {code: 1, meaning: Assigned}
+  - {code: 2, meaning: Completed}
+  - {code: 4, meaning: Canceled}
+  note: Code 3 is not published.
+- name: SettlementCategory
+  values:
+  - {code: 1, meaning: Cash settlement}
+  - {code: 2, meaning: Credit settlement}
+- name: RouteAction
+  values_count: 21
+  source: asyncapi/flash-express-webhooks.yml
+identifier_summary:
+  merchant_scope: mchId
+  join_key_to_merchant_systems: outTradeNo
+  parcel_key: pno
+  note: >-
+    outTradeNo is the merchant's own reference and is echoed on every webhook callback,
+    making it the reconciliation key between Flash Express and merchant systems. pno is the
+    Flash-issued waybill number and the key for every parcel-scoped operation.
+summary:
+  entity_count: 12
+  relationship_count: 12
+  enumeration_count: 6
+  derived_from_openapi: false

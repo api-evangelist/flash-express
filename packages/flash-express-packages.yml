@@ -1,0 +1,93 @@
+generated: '2026-08-12'
+method: searched
+source: https://open-docs.flashexpress.com/#demo-download
+note: >-
+  Flash Express publishes no client library on any public package registry. npm, PyPI,
+  RubyGems and a GitHub code search were all checked and returned nothing first-party
+  (the only npm hit, "flashexpress-ui", is an unrelated third-party Vue component library
+  published by an individual account; every GitHub match is a third-party or unrelated
+  project). What Flash Express does distribute first-party is four downloadable reference
+  client implementations — C#, PHP, Java and Python — served as ZIP archives directly from
+  the developer documentation host under the "Demo Download" section. These are sample
+  clients that implement the SHA256 signature scheme and the order-creation call rather
+  than versioned, dependency-managed SDKs, so they have no registry metadata endpoint to
+  query. Only the C# archive carries a version in its filename; the other three filenames
+  are unpinned and float to whatever the docs host currently serves, which means a consumer
+  cannot tell which build they are getting either. Each ZIP was fetched and confirmed to be
+  a real archive (PK magic bytes, application/zip) on 2026-08-12.
+packages:
+- language: csharp
+  registry: direct
+  name: CSharpDemo
+  url: https://open-docs.flashexpress.com/download/CSharpDemo_v1.1.0.zip
+  install: Download and unzip CSharpDemo_v1.1.0.zip from the Flash Express docs host
+  official: true
+  kind: reference-client
+  version: 1.1.0
+  published: null
+  size_bytes: 212943
+  note: >-
+    Version read from the pinned filename (CSharpDemo_v1.1.0.zip). No registry metadata
+    endpoint exists for a direct-download ZIP, so no publication date is available.
+- language: java
+  registry: direct
+  name: flash-open-api-demo
+  url: https://open-docs.flashexpress.com/download/flash-open-api-demo.zip
+  install: Download and unzip flash-open-api-demo.zip from the Flash Express docs host
+  official: true
+  kind: reference-client
+  version: null
+  published: null
+  size_bytes: 38191
+  note: >-
+    Checked, nothing to record. The download URL is unpinned and carries no version, and
+    the archive is not published to Maven Central or any other registry, so there is no
+    version metadata to read.
+- language: php
+  registry: direct
+  name: flashDemo.php
+  url: https://open-docs.flashexpress.com/download/flashDemo.php.zip
+  install: Download and unzip flashDemo.php.zip from the Flash Express docs host
+  official: true
+  kind: reference-client
+  version: null
+  published: null
+  size_bytes: 2951
+  note: >-
+    Checked, nothing to record. Unpinned download URL, not published to Packagist, so no
+    version or publication date is available.
+- language: python
+  registry: direct
+  name: python_order_demo.py
+  url: https://open-docs.flashexpress.com/download/python_order_demo.py.zip
+  install: Download and unzip python_order_demo.py.zip from the Flash Express docs host
+  official: true
+  kind: reference-client
+  version: null
+  published: null
+  size_bytes: 2019
+  note: >-
+    Checked, nothing to record. Unpinned download URL, not published to PyPI (pypi.org
+    returned "Not Found" for flashexpress), so no version or publication date is available.
+registries_checked:
+- registry: npm
+  query: flashexpress
+  first_party_result: false
+  note: 1 unrelated third-party result (flashexpress-ui, last published 2020-07-28)
+- registry: pypi
+  query: flashexpress
+  first_party_result: false
+  note: HTTP 404 Not Found
+- registry: rubygems
+  query: flashexpress
+  first_party_result: false
+  note: empty result set
+- registry: github
+  query: flashexpress in:name,description
+  first_party_result: false
+  note: 11 results, none owned by Flash Express; no first-party GitHub organization found
+summary:
+  package_count: 4
+  official_count: 4
+  registry_published_count: 0
+  languages: [csharp, java, php, python]

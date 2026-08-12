@@ -1,0 +1,119 @@
+generated: '2026-08-12'
+method: derived
+source: https://open-docs.flashexpress.com/#api-reference
+note: >-
+  Cross-cutting standards conformance for the FlashExpress Open API, assessed against the
+  published documentation. Flash Express makes no explicit standards or certification claim
+  anywhere on its developer surface, and the trust-center/compliance probe found no
+  published certification program, so NO `Compliance` pointer is emitted in apis.yml. Every
+  `conforms: false` below is a verified absence, not an untested assumption. The overall
+  picture is a pre-REST, WeChat-Pay-style signed form-post API: it predates and does not
+  adopt most of the modern HTTP API conventions this list tests for.
+standards:
+- id: openapi
+  conforms: false
+  evidence: >-
+    No OpenAPI or Swagger document is published. /openapi.json, /openapi.yaml,
+    /swagger.json, /v1/openapi.json and /api-docs were probed on open-api.flashexpress.com
+    and open-api-tra.flashexpress.com (all HTTP 404) and on open-docs.flashexpress.com
+    (HTTP 200 but the SPA catch-all HTML index, not a spec).
+- id: asyncapi
+  conforms: false
+  evidence: No AsyncAPI document published; the event surface is documented webhooks only. See asyncapi/flash-express-webhooks.yml.
+- id: graphql
+  conforms: false
+  evidence: No GraphQL endpoint documented or discovered.
+- id: grpc
+  conforms: false
+  evidence: No .proto definitions or gRPC surface published.
+- id: mcp
+  conforms: false
+  evidence: No Model Context Protocol server published or documented.
+- id: rest
+  conforms: false
+  evidence: >-
+    Not RESTful. Every operation is HTTP POST including pure reads; HTTP methods carry no
+    semantics; business errors return HTTP 200 with an error code in the body rather than
+    using HTTP status codes.
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: >-
+    Errors use a proprietary {code, message, data} envelope with application/json, not
+    application/problem+json. See errors/flash-express-error-codes.yml.
+- id: oauth2
+  conforms: false
+  evidence: >-
+    No OAuth 2.0. Authentication is shared-secret SHA256 request signing with mchId +
+    nonceStr + sign. No authorization server, token endpoint or scopes.
+- id: oidc
+  conforms: false
+  evidence: /.well-known/openid-configuration returns HTTP 404 on both API hosts.
+- id: rfc8414-oauth-authorization-server-metadata
+  conforms: false
+  evidence: /.well-known/oauth-authorization-server returns HTTP 404 on both API hosts.
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: >-
+    /.well-known/security.txt returns HTTP 404 on the API hosts, the SPA catch-all HTML on
+    the docs host, and an empty zero-byte 200 on the corporate site. No security.txt is
+    served. See well-known/flash-express-well-known.yml.
+- id: rfc8615-well-known
+  conforms: false
+  evidence: No well-known document of any kind was found on any host.
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: No Sunset or Deprecation header support documented. See lifecycle/flash-express-lifecycle.yml.
+- id: idempotency-key
+  conforms: false
+  evidence: >-
+    No idempotency key header or parameter. Duplicate creates are rejected with code 1003
+    rather than replayed. See conventions/flash-express-conventions.yml.
+- id: pagination
+  conforms: false
+  evidence: >-
+    No pagination convention documented; no page, cursor, limit or offset parameter appears
+    in the reference.
+- id: rate-limit-headers
+  conforms: false
+  evidence: >-
+    No RateLimit-*, X-RateLimit-* or Retry-After signalling documented. See
+    rate-limits/flash-express-rate-limits.yml.
+- id: json
+  conforms: true
+  evidence: All responses are JSON with UTF-8 encoding, per the Basic Response Data Format section.
+- id: https-only
+  conforms: true
+  evidence: >-
+    "For the security, we use HTTPS protocol." Confirmed by probe — both API hosts negotiate
+    TLSv1.3. See security/flash-express-domain-security.yml.
+- id: webhooks
+  conforms: true
+  evidence: >-
+    Five documented webhook event types with a self-service subscription API, a signed
+    payload, a defined acknowledgement contract and automatic redelivery.
+- id: signed-webhooks
+  conforms: true
+  evidence: Webhook callbacks carry a SHA256 sign over mchId and nonceStr.
+- id: i18n-accept-language
+  conforms: true
+  evidence: >-
+    Accept-Language request header switches response language across zh-CN, en, th and lo,
+    per the Internationalization Reference section.
+- id: sandbox-separation
+  conforms: true
+  evidence: >-
+    A distinct training environment (open-api-tra.flashexpress.com) is published alongside
+    production. See sandbox/flash-express-sandbox.yml.
+certifications:
+  published: false
+  trust_center: false
+  note: >-
+    probe-security-programs.py returned vdp=none trust=none. No SOC 2, ISO 27001, PCI DSS,
+    HIPAA, FedRAMP or CSA STAR claim was found on any Flash Express host, and no trust
+    center, security page or vulnerability disclosure program exists. No `Compliance` or
+    `Security` pointer is emitted.
+summary:
+  standards_tested: 22
+  conforms_true: 6
+  conforms_false: 16
+  compliance_program_published: false

@@ -1,0 +1,92 @@
+generated: '2026-08-12'
+method: searched
+source: https://open-docs.flashexpress.com/#the-security-reference
+docs: https://open-docs.flashexpress.com/#signature-algorithm
+note: >-
+  Flash Express publishes no OpenAPI, so this profile was read directly from the published
+  "The Security Reference" section of the FlashExpress Open API documentation rather than
+  derived from securitySchemes. The scheme is a shared-secret request-signing model, not a
+  bearer token and not OAuth: there is no token endpoint, no authorization server, no
+  scopes, and no refresh flow. Every request carries the merchant identity inline and is
+  signed per-call.
+summary:
+  types: [signature]
+  api_key_in: [body]
+  oauth2_flows: []
+  oauth2: false
+  openid_connect: false
+  mutual_tls: false
+  bearer_token: false
+schemes:
+- name: FlashSignature
+  type: signature
+  in: body
+  transport: https
+  request_method: POST
+  content_type: application/x-www-form-urlencoded
+  algorithm: SHA256
+  encoding: uppercase hex
+  parameters:
+  - name: mchId
+    type: string(32)
+    required: true
+    description: Merchant account number issued by Flash Express.
+  - name: nonceStr
+    type: string(32)
+    required: true
+    description: >-
+      Random nonce string, included so the signature is unpredictable. The documentation
+      recommends generating a random number and converting it to a string; the published
+      examples also use millisecond epoch timestamps.
+  - name: sign
+    type: string(64)
+    required: true
+    description: Uppercase SHA256 signature over the canonicalized request.
+  secret:
+    name: key
+    issuance: >-
+      The merchant secret key is issued and reset only by Flash Express support staff.
+      The documentation states "About The security key: Please contact the official
+      support staff to obtain or reset." There is no self-service key provisioning.
+    rotation_documented: false
+  signing_algorithm:
+    steps:
+    - Collect every sent parameter into set M.
+    - Drop any parameter whose value is empty or consists only of whitespace; blank values may still be transmitted but must not be signed.
+    - Sort the remaining parameter names by ASCII code, ascending (dictionary order). Parameter names are case sensitive.
+    - Join as key1=value1&key2=value2 into stringA.
+    - Append the merchant secret as &key=<secret> to produce stringSignTemp.
+    - sign = SHA256(stringSignTemp) uppercased.
+    - Compute the signature BEFORE urlencoding; the server verifies after urldecoding.
+    excluded_from_signature:
+    - the sign parameter itself
+    - >-
+      any parameter whose value is entirely whitespace. The documentation enumerates the
+      whitespace characters as HORIZONTAL TABULATION (U+0009), LINE FEED (U+000A),
+      VERTICAL TABULATION (U+000B), FORM FEED (U+000C), ENTER (U+000D), FILE SEPARATOR
+      (U+001C), GROUP SEPARATOR (U+001D), RECORD SEPARATOR (U+001E) and UNIT SEPARATOR
+      (U+001F).
+    forward_compatibility: >-
+      The documentation states the API may add fields and that verifiers must support
+      newly added extended fields when checking a signature.
+  response_signing:
+    supported: true
+    note: >-
+      Webhook callbacks delivered to the merchant are themselves signed. For webhook
+      requests only mchId and nonceStr participate in the signature, so a merchant
+      verifying an inbound webhook signs a different parameter set than it does when
+      calling the API.
+  failure:
+    code: 1002
+    message: invalid signature
+    source: https://open-docs.flashexpress.com/#response-code
+sub_accounts:
+  supported: true
+  operation: POST /open/v1/new_sub_account
+  note: Merchants can create sub-accounts, each of which receives its own merchant credentials.
+environments:
+- name: production
+  base_url: https://open-api.flashexpress.com
+- name: training
+  base_url: https://open-api-tra.flashexpress.com
+  note: Separate credentials are issued per environment by Flash Express support.

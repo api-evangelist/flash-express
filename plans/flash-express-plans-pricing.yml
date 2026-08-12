@@ -1,0 +1,56 @@
+generated: '2026-08-12'
+method: searched
+source: https://flashexpress.com/fle/check-price
+note: >-
+  Flash Express publishes NO plans, tiers or price list — for the API or for the shipping
+  service itself. plan_count is 0, and that is a measured result, not an omission. The
+  pricing page at /fle/check-price is an interactive rate calculator: the visitor enters
+  origin, destination, weight in kg, package dimensions in cm and product type, and gets a
+  quote back. No rate card, weight band table, service tier price, COD fee schedule or VAT
+  figure is displayed anywhere on the page, which instead directs the visitor to the sales
+  inquiry team. The API itself is not separately priced or metered — it is a free
+  integration channel available to Flash Express merchants, and access is gated on having a
+  merchant account rather than on purchasing an API plan.
+plan_count: 0
+pricing_model: quote-based
+api_priced_separately: false
+api_access_model: >-
+  Bundled with a Flash Express merchant account at no separate charge. There is no API
+  pricing page, no per-call price, no request quota tied to a paid tier, and no metered
+  billing documented. A merchant obtains an mchId and security key from Flash Express
+  support and integrates at no stated API cost.
+plans: []
+pricing_surfaces:
+- url: https://flashexpress.com/fle/check-price
+  status: 200
+  kind: rate calculator
+  published_rates: false
+  inputs: [origin, destination, weight_kg, length_cm, width_cm, height_cm, product_type]
+  note: Dynamic quote tool. Returns an estimate; publishes no static rate table.
+- url: https://flashexpress.com/fle/contact-us
+  status: 200
+  kind: sales inquiry
+  note: Where the pricing page routes visitors who want actual rates.
+- url: https://open-docs.flashexpress.com/
+  status: 200
+  kind: developer documentation
+  published_rates: false
+  note: >-
+    The FlashExpress Open API reference contains no pricing, quota or commercial terms of
+    any kind. It does expose a freight-rate estimation operation
+    (POST /open/v1/orders/estimate_rate) which returns a quote in cents at call time — the
+    machine-readable equivalent of the web calculator, and the only programmatic way to
+    obtain a Flash Express price.
+programmatic_pricing:
+  available: true
+  operation: POST /open/v1/orders/estimate_rate
+  returns: freight rate quote
+  currency_unit: cent
+  currency_ratio: 1 THB = 100 cent
+  note: >-
+    Rates are quoted per shipment at call time rather than published as a schedule. An
+    integrator must call estimate_rate to learn a price; there is no downloadable tariff.
+commercial_terms:
+  url: https://flashexpress.com/fle/our-service/service-agreement/company-agreement
+  status: 200
+  note: Company service agreement covering the delivery service. Not an API pricing document.

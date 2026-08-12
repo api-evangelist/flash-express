@@ -42,5 +42,25 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Flash Express is a company surfaced via the API Evangelist harvest backlog (source: secondary-market) and added to the network as a stub for full-pipeline profiling.
-- https://www.nasdaqprivatemarket.com/
+Flash Express is a Bangkok-headquartered express parcel delivery and e-commerce logistics operator
+serving Thailand, with affiliated operations in the Philippines and Laos. It publishes the
+**FlashExpress Open API**, a merchant-facing integration surface for creating shipments, printing
+waybill labels, tracking parcels, estimating freight rates, scheduling courier pickups and
+subscribing to delivery webhooks.
+
+- Website: https://flashexpress.com/en/
+- Developer documentation: https://open-docs.flashexpress.com/
+- Production API base URL: https://open-api.flashexpress.com
+- Training API base URL: https://open-api-tra.flashexpress.com
+
+### Notes on this profile
+
+The FlashExpress Open API is fully and publicly documented, but it is a signed form-post API rather
+than a REST API, and it ships **no machine-readable contract** — no OpenAPI, AsyncAPI, GraphQL or
+MCP surface exists (all hosts were probed). Artifacts in this repository were therefore read from the
+provider's published HTML reference and recorded with their real provenance, rather than derived from
+a spec. Notable characteristics captured here: every operation is `POST` including reads, business
+errors are returned with HTTP 200 and a code in the body, authentication is SHA256 shared-secret
+request signing, weight is always grams and money always integer cents, and there is no idempotency
+key. A real webhook surface (five event types, signed callbacks, automatic redelivery) is documented
+and captured in `asyncapi/`.
