@@ -25,6 +25,19 @@ tags:
 - Parcel Tracking
 - E-Commerce
 - Last Mile
+- Couriers
+- Cash on Delivery
+- Thailand
+- Southeast Asia
+- Webhook
+tags_raw:
+- Company
+- Logistics
+- Shipping
+- Delivery
+- Parcel Tracking
+- E-Commerce
+- Last Mile
 - Courier
 - Cash on Delivery
 - Thailand
@@ -47,6 +60,13 @@ apis:
   humanURL: https://open-docs.flashexpress.com/
   baseURL: https://open-api.flashexpress.com
   tags:
+  - Shipping
+  - Logistics
+  - Parcel Tracking
+  - Order
+  - Webhook
+  - Cash on Delivery
+  tags_raw:
   - Shipping
   - Logistics
   - Parcel Tracking
