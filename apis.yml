@@ -10,6 +10,17 @@ description: 'Flash Express is a Bangkok-headquartered express parcel delivery a
   management, order creation and modification, label printing, freight-rate estimation, parcel
   tracking, courier pickup scheduling, and a webhook service that pushes status, weight, price,
   courier and route events back to the merchant.'
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: false
+  label: Hosted service · you call their endpoint
+  confidence: medium
+  source:
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://flashexpress.com/favicon.ico
 url: https://raw.githubusercontent.com/api-evangelist/flash-express/refs/heads/main/apis.yml
 x-type: company
