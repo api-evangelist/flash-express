@@ -1,15 +1,14 @@
 aid: flash-express
 name: Flash Express
-description: 'Flash Express is a Bangkok-headquartered express parcel delivery and e-commerce
-  logistics operator serving Thailand, with affiliated operations in the Philippines and Laos.
-  It runs door-to-door pickup and last-mile delivery for B2B, B2C and C2C shippers, including
-  next-day and weekend delivery, bulky and fruit shipping, cash-on-delivery collection with daily
-  settlement, parcel insurance, and a nationwide network of branches and drop-off points. For
-  merchants and platform integrators Flash Express publishes the FlashExpress Open API, an
-  HTTPS/POST, form-urlencoded, SHA256-signed interface covering warehouse and sub-account
-  management, order creation and modification, label printing, freight-rate estimation, parcel
-  tracking, courier pickup scheduling, and a webhook service that pushes status, weight, price,
-  courier and route events back to the merchant.'
+description: Flash Express is a Bangkok-headquartered express parcel delivery and e-commerce logistics
+  operator serving Thailand, with affiliated operations in the Philippines and Laos. It runs door-to-door
+  pickup and last-mile delivery for B2B, B2C and C2C shippers, including next-day and weekend delivery,
+  bulky and fruit shipping, cash-on-delivery collection with daily settlement, parcel insurance, and a
+  nationwide network of branches and drop-off points. For merchants and platform integrators Flash Express
+  publishes the FlashExpress Open API, an HTTPS/POST, form-urlencoded, SHA256-signed interface covering
+  warehouse and sub-account management, order creation and modification, label printing, freight-rate
+  estimation, parcel tracking, courier pickup scheduling, and a webhook service that pushes status, weight,
+  price, courier and route events back to the merchant.
 deliveryModel:
   model: saas
   open_source: false
@@ -70,19 +69,18 @@ tags_raw:
 - Southeast Asia
 - Webhooks
 apis:
-- aid: flash-express-open-api
+- aid: flash-express:flash-express-open-api
   name: FlashExpress Open API
-  description: 'The FlashExpress Open API is the merchant-facing integration surface for Flash
-    Express parcel logistics in Thailand. All calls are HTTPS POST with an
-    application/x-www-form-urlencoded body and a JSON response envelope of code/message/data.
-    Every request is authenticated with a merchant id (mchId), a random nonce string (nonceStr)
-    and an uppercase SHA256 signature (sign) computed over the ASCII-sorted non-empty parameters
-    joined with a merchant secret key issued by Flash Express support. The API covers warehouse
-    listing, the Flash standard address/location tree, sub-account creation, order creation
-    (including creation against a merchant-supplied tracking number), order modification and
-    cancellation, single and batch parcel route tracking, delivered-proof retrieval, 100x180mm and
-    100x75mm label pre-print, freight-rate estimation, courier pickup notification scheduling and
-    cancellation, and webhook subscription management.'
+  description: The FlashExpress Open API is the merchant-facing integration surface for Flash Express
+    parcel logistics in Thailand. All calls are HTTPS POST with an application/x-www-form-urlencoded body
+    and a JSON response envelope of code/message/data. Every request is authenticated with a merchant
+    id (mchId), a random nonce string (nonceStr) and an uppercase SHA256 signature (sign) computed over
+    the ASCII-sorted non-empty parameters joined with a merchant secret key issued by Flash Express support.
+    The API covers warehouse listing, the Flash standard address/location tree, sub-account creation,
+    order creation (including creation against a merchant-supplied tracking number), order modification
+    and cancellation, single and batch parcel route tracking, delivered-proof retrieval, 100x180mm and
+    100x75mm label pre-print, freight-rate estimation, courier pickup notification scheduling and cancellation,
+    and webhook subscription management.
   humanURL: https://open-docs.flashexpress.com/
   baseURL: https://open-api.flashexpress.com
   tags:
