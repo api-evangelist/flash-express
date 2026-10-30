@@ -64,25 +64,111 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Flash Express is a Bangkok-headquartered express parcel delivery and e-commerce logistics operator
-serving Thailand, with affiliated operations in the Philippines and Laos. It publishes the
-**FlashExpress Open API**, a merchant-facing integration surface for creating shipments, printing
-waybill labels, tracking parcels, estimating freight rates, scheduling courier pickups and
-subscribing to delivery webhooks.
+Flash Express is a Bangkok-headquartered express parcel delivery and e-commerce logistics operator serving Thailand, with affiliated operations in the Philippines and Laos. It runs door-to-door pickup and last-mile delivery for B2B, B2C and C2C shippers, including next-day and weekend delivery, bulky and fruit shipping, cash-on-delivery collection with daily settlement, parcel insurance, and a nationwide network of branches and drop-off points. For merchants and platform integrators Flash Express publishes the FlashExpress Open API, an HTTPS/POST, form-urlencoded, SHA256-signed interface covering warehouse and sub-account management, order creation and modification, label printing, freight-rate estimation, parcel tracking, courier pickup scheduling, and a webhook service that pushes status, weight, price, courier and route events back to the merchant.
 
-- Website: https://flashexpress.com/en/
-- Developer documentation: https://open-docs.flashexpress.com/
-- Production API base URL: https://open-api.flashexpress.com
-- Training API base URL: https://open-api-tra.flashexpress.com
+**Areas:** Company · Logistics · Shipping · Delivery · Parcel Tracking · E-Commerce · Last Mile Delivery · Couriers · Cash on Delivery · Thailand · Southeast Asia · Webhook
 
-### Notes on this profile
+## Flash Express on APIs.io
 
-The FlashExpress Open API is fully and publicly documented, but it is a signed form-post API rather
-than a REST API, and it ships **no machine-readable contract** — no OpenAPI, AsyncAPI, GraphQL or
-MCP surface exists (all hosts were probed). Artifacts in this repository were therefore read from the
-provider's published HTML reference and recorded with their real provenance, rather than derived from
-a spec. Notable characteristics captured here: every operation is `POST` including reads, business
-errors are returned with HTTP 200 and a code in the body, authentication is SHA256 shared-secret
-request signing, weight is always grams and money always integer cents, and there is no idempotency
-key. A real webhook surface (five event types, signed callbacks, automatic redelivery) is documented
-and captured in `asyncapi/`.
+Everything profiled for Flash Express is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/flash-express/](https://apis.io/providers/flash-express/)** — or go straight to one of the APIs or properties below.
+
+### APIs (1)
+
+- [FlashExpress Open API](https://apis.io/apis/flash-express/flash-express-open-api/) — The FlashExpress Open API is the merchant-facing integration surface for Flash Express parcel logistics in Thailand. All calls are HTTPS POST with an…
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### AsyncAPI (1)
+
+Event-driven and webhook contracts.
+
+- [Flash Express Webhooks](https://apis.io/asyncapis/flash-express/flash-express-webhooks/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Flash Express Authentication](https://apis.io/security/flash-express/flash-express-authentication/)
+- [Flash Express Domain Security](https://apis.io/security/flash-express/flash-express-domain-security/)
+
+#### Plans and pricing (1)
+
+Published plans, tiers and prices.
+
+- [Flash Express Plans Pricing](https://apis.io/plans/flash-express/flash-express-plans-pricing/)
+
+#### Rate limits (1)
+
+Published request limits.
+
+- [Flash Express Rate Limits](https://apis.io/rate-limits/flash-express/flash-express-rate-limits/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://flashexpress.com/en/)
+- [Documentation](https://open-docs.flashexpress.com/)
+- [Getting started](https://open-docs.flashexpress.com/#the-basic-standard)
+- [API reference](https://open-docs.flashexpress.com/#api-reference)
+- [Pricing](https://flashexpress.com/fle/check-price)
+- [Sign up](https://flashexpress.com/fle/register)
+- [Support](https://flashexpress.com/fle/contact-us)
+- [Blog](https://flashexpress.com/fle/news/)
+- [Terms of service](https://flashexpress.com/fle/our-service/service-agreement/company-agreement)
+- [Privacy policy](https://flashexpress.com/fle/our-service/service-agreement/privacy-policy)
+
+## API Evangelist rating
+
+**Kin Score 34.9** — thin · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 66.1 |
+| Contract quality | 39.0 |
+| Contract governance | 4.5 |
+| Operational transparency | 7.9 |
+| Developer ergonomics | 33.3 |
+| Access clarity | 44.7 |
+
+**Agent readiness 25.2** — agent-aware
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | — |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | — |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | — |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | yes |
+| Agent Skills | — |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 24.5** — Horizontal (data, software, accessibility, platform)
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/flash-express/](https://apis.io/providers/flash-express/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Flash Express: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/flash-express/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
